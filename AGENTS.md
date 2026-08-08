@@ -1,4 +1,4 @@
-# M Maps — agent handoff and project source of truth
+# M Maps — Agent Handoff and Project Source of Truth
 
 Read this entire file before changing the project. It describes the code that exists in the
 working tree now, including local `develop` work that may not have been committed or pushed yet.
@@ -8,13 +8,12 @@ second copy.
 
 ## 1. Product, purpose, and boundaries
 
-M Maps is an open-source iPhone location-simulation tool for macOS. It connects to a trusted,
-Developer-Mode iPhone over USB and uses `pymobiledevice3` to set the location that iOS reports.
+M Maps is an open-source iPhone location-simulation tool for macOS. It connects to a trusted iPhone with Developer Mode enabled over USB and uses `pymobiledevice3` to set the location that iOS reports.
 It is intended for harmless pranks and device testing only. Do not use it to deceive, defraud, or
 evade tracking.
 
 - Runtime: Python 3, `pymobiledevice3`, FastAPI, uvicorn, and pywebview.
-- Device support today: iPhone on iOS 17+ connected to a Mac by USB.
+- Device support today: iPhone running iOS 17 or later, connected to a Mac over USB.
 - Development machine: Apple Silicon macOS with Xcode Command Line Tools; do not assume Homebrew
   or full Xcode.
 - Current release version: `1.0.5` in `mmaps/__init__.py`. Do not bump it automatically.
@@ -26,7 +25,7 @@ evade tracking.
   Google Maps assets. A user-provided Google key stays in browser `localStorage` and is sent to
   Google, not to the M Maps backend.
 
-The iOS 17+ RemoteXPC tunnel creates a `utun` interface, so setting, clearing, or serving a spoof
+On iOS 17 and later, the RemoteXPC tunnel creates a 'utun' interface so setting, clearing, or serving a spoof
 session requires root. Detection does not. The native app asks for administrator access through a
 macOS system dialog and keeps the visible pywebview process unprivileged.
 
@@ -37,9 +36,8 @@ macOS system dialog and keeps the visible pywebview process unprivileged.
 `mmaps/location.py::hold_location()` is the low-level engine. It opens one Remote Service
 Discovery tunnel and one DVT `LocationSimulation` channel, reads a coordinate from a callable,
 and re-asserts that coordinate approximately every 2.5 seconds. The DVT connection must remain
-open or iOS returns to real GPS. A wake event makes retargets immediate instead of waiting for the
+open or iOS returns to real GPS. A wake event applies retargets immediately instead of waiting for the
 next keepalive tick.
-
 Recoverable USB, tunnel, and transient lock errors are caught inside the loop. It reports a calm
 reconnecting state, backs off, rebuilds the tunnel, and resumes the latest coordinate. A recovered
 per-tick error is not displayed as a fatal UI error. Unexpected failures terminate the engine and
@@ -53,8 +51,7 @@ are humanized by `mmaps/errors.py`.
   points by repeatedly calling `set_target()`. It does not rebuild the tunnel.
 - `start_trip(legs)` runs drive/fly legs in order through the same movement mechanism.
 - A trip leg may include `wait_seconds`. Between non-final legs, the session holds the arrival
-  point until the wait expires or `leave_now()` is called. The final point already holds
-  indefinitely, so a final-leg wait is intentionally ignored.
+  point until the wait expires or `leave_now()` is called. The final point is already held indefinitely, so a final-leg wait is intentionally ignored.
 - `stop_movement()` cancels movement/trip but continues holding the current point.
 - `stop()` cancels movement, clears the simulated location, and ends the hold loop.
 - `status()` returns cached device facts and live engine, assertion, movement, reconnect, and trip
@@ -79,9 +76,8 @@ and Car 60 km/h. Cosine speed easing slows starts, finishes, and sharp turns. Un
 Catmull–Rom smoothing remains available as a legacy opt-in but is off by default because it can
 cut corners and place the phone beside the routed road.
 
-`mmaps/flight.py` uses great-circle interpolation at about 875 km/h. Slow/Normal/Fast multipliers
-are 0.85/1.0/1.1, and the flight tick is 0.5 seconds. Current flight playback is realistic-time,
-not the early 1–3 minute global time-compression design. `duration_seconds` can override playback
+`mmaps/flight.py` uses great-circle interpolation at approximately 875 km/h. Slow/Normal/Fast multipliers
+are 0.85/1.0/1.1, and the flight tick is 0.5 seconds. Current flight playback uses realistic timing, not the early 1–3 minute global time-compression design. `duration_seconds` can override playback
 duration through the API, but there is not yet a finished trip-duration/arrival-time UI.
 
 Fly has no draw-path mode. Standalone and multi-stop fly legs snap their destination to the
@@ -102,12 +98,12 @@ state.
 - A single floating translucent command bar sits over the map. It contains M Maps identity,
   compact iPhone status/details, collapsed Search, Teleport/Route/Multi-stop mode controls,
   Route speeds, Settings, and Restore GPS.
-- Search is an icon while idle. It expands into an input when used and collapses on Escape or an
+- When idle, Search is represented by an icon.. It expands into an input when used and collapses on Escape or an
   outside click. Place-name lookup occurs only on explicit Search/Enter to respect Nominatim;
   `lat, lon` text is parsed locally.
 - Teleport clicks do not immediately move the phone. A destination preview asks the user to
   confirm with Move/Place here, preventing accidental map clicks.
-- Route requests the public OSRM demo route in the browser, draws it, and starts the selected road
+- Route requests a route from the public OSRM demo service in the browser, draws it, and starts the selected road
   speed through `POST /drive`. OSRM no-route, network, and rate-limit failures produce friendly
   choices rather than a FastAPI 404 or raw exception.
 - Multi-stop builds ordered stops, selects a dwell time (presets or custom 1–1,440 minutes), plans
@@ -132,7 +128,7 @@ blur was disproportionately expensive; the bar remains translucent.
 
 ## 4. HTTP API
 
-Coordinates in JSON road/flight arrays use GeoJSON order `[longitude, latitude]`. The engine uses
+Coordinates in JSON road and flight arrays use GeoJSON order `[longitude, latitude]`. The engine uses
 `(latitude, longitude)` tuples internally. Device-dependent endpoints return HTTP 503 when no
 phone session is confirmed. Validation and service failures use FastAPI `{ "detail": "..." }`.
 
@@ -278,7 +274,7 @@ Generated/local directories such as `venv/`, `build/`, `dist/`, `.pytest_cache/`
 
 ## 6. How to set up, run, and test
 
-### One-time environment
+### One-time setup
 
 ```sh
 cd /Users/mj/Developer/m-maps
@@ -324,14 +320,14 @@ request, but an already-running process still has the old Python routes in memor
 
 ### Real-iPhone manual regression flow
 
-1. Plug the iPhone into USB, unlock it, accept Trust, and ensure Developer Mode is enabled. Enabling
+1. Plug the iPhone into USB, unlock it, accept the trust prompt, and ensure Developer Mode is enabled. Enabling
    it may reboot the phone; leave it connected and unlock again.
 2. Start `venv/bin/python3 m_maps.py app` or `sudo venv/bin/python3 m_maps.py serve`.
 3. Confirm the detected device. Verify name, iOS, trust, and Developer Mode in the device panel.
 4. In Teleport, click a point. Confirm that nothing moves until Move/Place here is pressed. Verify
    the new location in iPhone Maps and Find My, then intentionally click elsewhere and cancel.
 5. In Route, place a start, choose each road speed, select a nearby destination, inspect the OSRM
-   line, and start. The dot should remain on the full road polyline with no corner-cutting or
+   line, and start. The marker should remain on the full road polyline with no corner-cutting or
    synthetic sidewalk jitter. Stop here should hold the current point.
 6. Test OSRM failure/no-route behavior and ensure the UI offers a calm retry/Teleport path.
 7. Test Fly. It should draw/follow a great-circle path and land at the nearest passenger airport.
@@ -354,8 +350,7 @@ process termination breaks active playback and the DVT connection.
 - Antimeridian overlay: a great-circle flight crossing ±180° can be drawn across the long side of
   a flat map. Device points still take the correct short route; this is cosmetic.
 - Road centerlines differ among OSRM/OpenStreetMap, Google, and Apple. The emitted point remains on
-  OSRM's route, but another provider can visually place that coordinate a few metres beside its
-  own road drawing.
+  OSRM's route, but another provider can visually place that coordinate a few metres from its own road drawing.
 - Public OSRM and Nominatim services are rate-limited and appropriate only for light personal use.
   Distribution at scale needs a hosted/keyed routing/search decision.
 - A Google key is user-supplied and stored in browser localStorage. M Maps does not validate
@@ -375,13 +370,13 @@ process termination breaks active playback and the DVT connection.
 
 - No Android device engine. Android mock-location behavior, permissions, OEM differences, root/no-
   root feasibility, and cross-platform ADB architecture need a separate research/prototype phase.
-- No Windows or Linux iPhone tunnel implementation, and no Intel/universal macOS release artifact.
+-  No iPhone tunnel implementation for Windows or Linux, and no Intel/universal macOS release artifact.
 - No automatic update installation. The UI can perform an optional notify-only GitHub release
   check; it does not download or install updates.
 - No public-internet remote control, accounts, authentication, Tailscale/UPnP/port forwarding, or
   persistent server/daemon. `--lan` exposes only the webpage on a private LAN; the phone remains
   USB-connected to the Mac.
-- No route schedule/arrival-time editor yet. Per-stop waits work; generalized trip-duration and
+- No route-scheduling or arrival-time editor yet. Per-stop waits work; generalized trip-duration and
   departure scheduling remain future features.
 - No joystick, custom drawn flight path, altitude simulation, Google routing, or self-hosted
   OSRM/Valhalla.
