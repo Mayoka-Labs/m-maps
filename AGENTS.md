@@ -20,9 +20,8 @@ evade tracking.
 - Default server exposure: `127.0.0.1:8765`. Optional `--lan` binds only to a specific private
   LAN IPv4 address, never `0.0.0.0`.
 - Privacy: M Maps has no telemetry and collects no user data. The Python process talks to the
-  phone and proxies explicit place searches to Nominatim. The UI/webview fetches map assets,
-  OSRM road routes, approximate-IP location, optional GitHub release metadata, and optional
-  Google Maps assets. A user-provided Google key stays in browser `localStorage` and is sent to
+  phone and proxies explicit place searches to Nominatim. The UI/webview fetches map assets, OSRM road routes, approximate IP-based
+location, optional GitHub release metadata, and optional Google Maps assets. A user-provided Google key stays in browser `localStorage` and is sent to
   Google, not to the M Maps backend.
 
 On iOS 17 and later, the RemoteXPC tunnel creates a 'utun' interface so setting, clearing, or serving a spoof
@@ -98,7 +97,7 @@ state.
 - A single floating translucent command bar sits over the map. It contains M Maps identity,
   compact iPhone status/details, collapsed Search, Teleport/Route/Multi-stop mode controls,
   Route speeds, Settings, and Restore GPS.
-- When idle, Search is represented by an icon.. It expands into an input when used and collapses on Escape or an
+- When idle, Search is represented by an icon. It expands into an input when used and collapses on Escape or an
   outside click. Place-name lookup occurs only on explicit Search/Enter to respect Nominatim;
   `lat, lon` text is parsed locally.
 - Teleport clicks do not immediately move the phone. A destination preview asks the user to
