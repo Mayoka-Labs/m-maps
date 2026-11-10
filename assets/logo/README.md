@@ -4,7 +4,9 @@ Color variants of the M Maps / Mayoka mark, each as SVG (source) and PNG.
 
 | File stem | Role |
 |-----------|------|
-| `mayoka-black` | **Shipping app icon** (see `assets/icon/AppIcon.icns`) |
+| `m-maps-icon-dark` | **Shipping dark tile** (M + MAPS, same family as M CODE) |
+| `m-maps-mark-black` | M mark only, black on transparent |
+| `mayoka-black` | Earlier white-tile mark (see `assets/icon/AppIcon.icns`) |
 | `mayoka-blue` | Future in-app icon picker |
 | `mayoka-gold` | Future in-app icon picker |
 | `mayoka-gray` | Future in-app icon picker |
