@@ -1,0 +1,14 @@
+# Cloudflare Pages redirects (this file is not served).
+# One-click short links: each one sends the browser to GitHub's redirect for
+# the newest release's exact file, which downloads it at once. Keep these in
+# step with SHORT_LINKS and ASSET_NAMES in release.js (a test checks them).
+/mac        https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-arm64.dmg 302
+/mac/       https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-arm64.dmg 302
+/mac-intel  https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-x86_64.dmg 302
+/mac-intel/ https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-x86_64.dmg 302
+/windows    https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-windows-x86_64.zip 302
+/windows/   https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-windows-x86_64.zip 302
+/linux      https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-linux-x86_64.tar.gz 302
+/linux/     https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-linux-x86_64.tar.gz 302
+/android    https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-android-companion.apk 302
+/android/   https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-android-companion.apk 302

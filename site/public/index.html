@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-c44V+m0IWuk37kpjPg3B8uUpLsadT1Ex9tXRxqgXnDs='; style-src 'sha256-XHX6tI2JTIaDCBg69759CErhMWvLhFTn6a2mMr0+Xys='; img-src 'self'; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+<title>Download M Maps</title>
+<meta name="description" content="Download M Maps, the open-source tool for setting a USB-connected phone's simulated GPS location from your computer, for development and device testing.">
+<link rel="canonical" href="https://m-maps.mayoka.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Download M Maps">
+<meta property="og:description" content="Set a USB-connected phone's simulated GPS location from your computer, for development and device testing.">
+<meta property="og:url" content="https://m-maps.mayoka.io/">
+<meta property="og:image" content="https://m-maps.mayoka.io/assets/app-icon-256.png">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<style>
+:root {
+  color-scheme: light dark;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --surface-2: #f3f3f3;
+  --text: #171717;
+  --text-2: #4a4a4a;
+  --border: #e5e5e5;
+  --link: #171717;
+  --btn: #ffb000;
+  --btn-hover: #e59a00;
+  --btn-text: #171717;
+  --accent: #c47c00;
+  --focus: #171717;
+  --badge-bg: #fff1cc;
+  --badge-text: #5c3d00;
+  --notice-bg: #fff6e4;
+  --notice-text: #5a3900;
+  --notice-border: #e2c48a;
+  --code-bg: rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 14px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.06), 0 22px 56px rgba(0, 0, 0, 0.12);
+  --radius: 18px;
+  --map-land: #f1efe9;
+  --map-road: #ffffff;
+  --map-road-edge: #dcd8ce;
+  --map-water: #b4daf4;
+  --map-park: #cde6c0;
+  --map-route: #0a84ff;
+  --map-route-casing: #ffffff;
+  --map-pin: #e5322b;
+  --map-chip: rgba(255, 255, 255, 0.94);
+  --map-chip-text: #1d1d1f;
+  --live: #1f9d47;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --surface: #1c1c1c;
+    --surface-2: #262626;
+    --text: #f5f5f5;
+    --text-2: #c6c6c6;
+    --border: #333333;
+    --link: #ffe08a;
+    --btn: #ffaa00;
+    --btn-hover: #ffc14d;
+    --accent: #ffaa00;
+    --focus: #ffe08a;
+    --badge-bg: #3a2f14;
+    --badge-text: #ffe7ad;
+    --notice-bg: #2e2614;
+    --notice-text: #ffe7ad;
+    --notice-border: #6a5420;
+    --code-bg: rgba(255, 255, 255, 0.08);
+    --shadow-sm: 0 0 0 1px rgba(255, 255, 255, 0.02);
+    --shadow-lg: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 22px 56px rgba(0, 0, 0, 0.5);
+    --map-land: #2a2c30;
+    --map-road: #4b4e56;
+    --map-road-edge: #202226;
+    --map-water: #1b3550;
+    --map-park: #22402b;
+    --map-route: #3d9bff;
+    --map-route-casing: #111113;
+    --map-pin: #ff453a;
+    --map-chip: rgba(28, 28, 31, 0.94);
+    --map-chip-text: #f5f5f7;
+    --live: #30d158;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 1.0625rem/1.55 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: var(--link); text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+main:focus { outline: none; }
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+code.fname { white-space: nowrap; overflow-wrap: normal; }
+h1, h2, h3 { color: var(--text); }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip-link {
+  position: absolute; left: 16px; top: -120px; z-index: 10;
+  padding: 10px 16px; border-radius: 10px;
+  background: var(--surface); color: var(--link);
+  box-shadow: var(--shadow-lg); font-weight: 600;
+}
+.skip-link:focus { top: 12px; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.us { font-weight: 300; }
+
+/* Header and the section bar. The bar under the current name is the whole
+   "which section is this" signal, the same job as a product-site tab. */
+.site-header {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--surface); color: var(--text);
+}
+.header-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 8px 24px; min-height: 64px; padding-top: 8px; padding-bottom: 8px;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--text); text-decoration: none;
+  font-weight: 600; font-size: 1.0625rem; letter-spacing: -0.02em;
+}
+.brand-mark { width: 22px; height: 26px; fill: currentColor; }
+.header-link { color: var(--text-2); font-weight: 500; text-decoration: none; }
+.header-link:hover { color: var(--text); }
+.site-tabs { border-bottom: 1px solid var(--border); }
+.nav-list {
+  display: flex; align-items: center; gap: 0 28px;
+  margin: 0; padding: 0; list-style: none;
+  overflow-x: auto; scrollbar-width: none;
+}
+.nav-list a {
+  position: relative; display: inline-block;
+  padding: 22px 0 18px; color: var(--text-2);
+  font-size: 1rem; line-height: 1; white-space: nowrap; text-decoration: none;
+}
+.nav-list a:hover { color: var(--text); }
+.nav-list a::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 4px;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 0.22s ease;
+}
+html:not(:has(.panel:target)):not(:has(.panel :target)) .nav-list a[aria-current="page"],
+html:has(#overview:target) .nav-list a[href="#overview"],
+html:has(#downloads:target) .nav-list a[href="#downloads"],
+html:has(#downloads :target) .nav-list a[href="#downloads"],
+html:has(#install:target) .nav-list a[href="#install"],
+html:has(#install :target) .nav-list a[href="#install"],
+html:has(#requirements:target) .nav-list a[href="#requirements"],
+html:has(#requirements :target) .nav-list a[href="#requirements"],
+html:has(#privacy:target) .nav-list a[href="#privacy"],
+html:has(#privacy :target) .nav-list a[href="#privacy"] {
+  color: var(--text);
+}
+html:not(:has(.panel:target)):not(:has(.panel :target)) .nav-list a[aria-current="page"]::after,
+html:has(#overview:target) .nav-list a[href="#overview"]::after,
+html:has(#downloads:target) .nav-list a[href="#downloads"]::after,
+html:has(#downloads :target) .nav-list a[href="#downloads"]::after,
+html:has(#install:target) .nav-list a[href="#install"]::after,
+html:has(#install :target) .nav-list a[href="#install"]::after,
+html:has(#requirements:target) .nav-list a[href="#requirements"]::after,
+html:has(#requirements :target) .nav-list a[href="#requirements"]::after,
+html:has(#privacy:target) .nav-list a[href="#privacy"]::after,
+html:has(#privacy :target) .nav-list a[href="#privacy"]::after {
+  transform: scaleX(1);
+}
+
+/* Hero */
+.hero { display: grid; gap: 48px; align-items: center; padding: 56px 0 28px; }
+.app-icon {
+  width: 80px; height: 80px; margin-bottom: 20px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.10)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.12));
+}
+h1 { margin: 0 0 18px; font-weight: 300; font-size: clamp(3.25rem, 8vw, 6rem); line-height: 0.98; letter-spacing: -0.035em; }
+.lede { margin: 0 0 22px; max-width: 42ch; font-size: clamp(1.125rem, 2.2vw, 1.35rem); line-height: 1.45; font-weight: 300; color: var(--text-2); }
+.pack-block { margin: 0 0 28px; }
+.pack-label {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.pack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pack a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.pack a:hover { border-color: var(--accent); text-decoration: none; }
+.pack .beta { margin-left: 6px; font-size: 0.75rem; font-weight: 500; color: var(--text-2); }
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; min-width: 112px; padding: 10px 18px;
+  border: 1px solid transparent; border-radius: 12px;
+  font-weight: 600; line-height: 1.25; text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.btn:hover { text-decoration: none; }
+.btn-primary {
+  flex-direction: column; align-items: flex-start;
+  padding: 12px 18px; border-radius: 12px;
+  background: var(--btn); color: var(--btn-text);
+}
+.btn-primary:hover { background: var(--btn-hover); color: var(--btn-text); }
+.btn-label { font-size: 1.0625rem; }
+.btn-sub { font-size: 0.8125rem; font-weight: 500; }
+.alt-link { font-weight: 600; }
+.hint { margin: 18px 0 0; max-width: 48ch; font-size: 0.9375rem; color: var(--text-2); }
+.meta { margin: 10px 0 0; font-size: 0.9375rem; color: var(--text-2); }
+.status { margin: 0; max-width: 54ch; font-size: 0.9375rem; }
+/* Shown after any download link is clicked, wherever it was: a bar pinned to the
+   bottom of the window with the next step and the same file again. */
+.next {
+  position: fixed; z-index: 20; left: 16px; right: 16px; bottom: 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  max-width: 560px; margin: 0 auto; padding: 14px 12px 14px 18px; border-radius: 12px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-bottom: 4px solid var(--accent);
+  box-shadow: var(--shadow-lg);
+}
+.next-body { flex: 1; min-width: 0; }
+.next-title { margin: 0 0 6px; font-weight: 600; overflow-wrap: anywhere; }
+.next-links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; font-size: 0.9375rem; }
+.next-links a { font-weight: 600; }
+.next-close {
+  flex: none; display: grid; place-items: center;
+  width: 32px; height: 32px; padding: 0; border-radius: 999px; cursor: pointer;
+  background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border);
+}
+.next-close:hover { color: var(--text); }
+.next-close svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.card .install-note { margin: 14px 0 0; font-size: 0.875rem; color: var(--text-2); }
+/* While the bar shows, the page gains room under it so nothing stays hidden. */
+html.has-next { scroll-padding-bottom: 168px; }
+html.has-next body { padding-bottom: 168px; }
+@media (max-width: 599px) {
+  .next { left: 8px; right: 8px; bottom: 8px; padding: 12px 10px 12px 14px; }
+  .next-title { font-size: 0.9375rem; }
+}
+.status.is-visible {
+  margin-top: 16px; padding: 12px 14px; border-radius: 12px;
+  background: var(--notice-bg); color: var(--notice-text); border: 1px solid var(--notice-border);
+}
+.hero-art { width: 100%; max-width: 560px; justify-self: center; }
+.map-frame { border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.map-art { width: 100%; height: auto; }
+.m-land { fill: var(--map-land); }
+.m-water { fill: var(--map-water); }
+.m-park { fill: var(--map-park); }
+.m-road-edge, .m-road, .m-route-casing, .m-route { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.m-road-edge { stroke: var(--map-road-edge); stroke-width: 15; }
+.m-road-edge.minor { stroke-width: 9; }
+.m-road { stroke: var(--map-road); stroke-width: 12; }
+.m-road.minor { stroke-width: 6; }
+.m-route-casing { stroke: var(--map-route-casing); stroke-width: 12; }
+.m-route { stroke: var(--map-route); stroke-width: 7; }
+.m-start { fill: var(--map-route-casing); stroke: var(--map-route); stroke-width: 4; }
+.m-halo { fill: var(--map-route); opacity: 0.2; transform-box: fill-box; transform-origin: center; animation: halo 2.6s ease-out infinite; }
+.m-ring { fill: #ffffff; }
+.m-dot { fill: var(--map-route); }
+.m-pin { fill: var(--map-pin); }
+.m-pin-dot { fill: #ffffff; }
+.m-chip { fill: var(--map-chip); }
+.m-chip-text { fill: var(--map-chip-text); font: 600 15px var(--font); }
+.m-live { fill: var(--live); }
+@keyframes halo {
+  0% { transform: scale(0.7); opacity: 0.32; }
+  70% { transform: scale(1.25); opacity: 0; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+
+/* One section on screen. A hash, including a card inside the section, shows that section. */
+.panel { display: none; scroll-margin-top: 128px; }
+#overview:target, #downloads:target, #install:target, #requirements:target, #privacy:target,
+.panel:has(:target),
+html:not(:has(.panel:target)):not(:has(.panel :target)) #overview {
+  display: block;
+  animation: panel-in 0.32s ease;
+}
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Sections */
+.section { padding: 28px 0 72px; }
+h2 { margin: 0 0 12px; font-weight: 300; font-size: clamp(2rem, 4.5vw, 3.25rem); line-height: 1.05; letter-spacing: -0.03em; }
+.section-lede { margin: 0 0 32px; max-width: 62ch; font-size: 1.125rem; font-weight: 300; color: var(--text-2); }
+.features { display: grid; gap: 16px; margin: 8px 0 0; padding: 0; list-style: none; }
+.feature {
+  padding: 22px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 16px;
+}
+.feature-icon {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; margin-bottom: 12px; border-radius: 12px;
+  background: var(--badge-bg); color: var(--badge-text);
+}
+.feature-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.feature h3 { margin: 0 0 4px; font-size: 1.0625rem; }
+.feature p { margin: 0; font-size: 0.9375rem; color: var(--text-2); }
+@media (max-width: 599px) {
+  .features { gap: 20px; }
+  .feature { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; }
+  .feature-icon { grid-row: 1 / span 2; margin-bottom: 0; }
+}
+
+/* Cards */
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.grid.two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+.grid.req-grid { grid-template-columns: minmax(0, 1fr); }
+.card {
+  padding: 22px; border-radius: 16px;
+  background: var(--surface); border: 1px solid var(--border);
+}
+.card h3 { margin: 0 0 10px; font-size: 1.125rem; letter-spacing: -0.01em; }
+.card p { margin: 0 0 10px; }
+.card p:last-child { margin-bottom: 0; }
+.card ul { margin: 0; padding-left: 1.15em; font-size: 0.9375rem; color: var(--text-2); }
+.card li + li { margin-top: 6px; }
+.card ol.steps { margin: 0; padding-left: 1.3em; font-size: 0.9375rem; color: var(--text-2); }
+.card ol.steps li + li { margin-top: 8px; }
+.card ol.steps li::marker { font-weight: 700; color: var(--text); }
+.grid.install-grid { grid-template-columns: minmax(0, 1fr); }
+/* Long file names and commands wrap inside a step instead of leaving the card. */
+.card ol.steps code, .card ol.steps code.fname { white-space: normal; overflow-wrap: anywhere; }
+.install { scroll-margin-top: 140px; }
+.install .dl-top { margin-bottom: 6px; }
+.install.is-current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.dl { display: flex; flex-direction: column; gap: 10px; scroll-margin-top: 140px; }
+.dl.is-recommended { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.dl-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.eyebrow { margin: 0; font-size: 0.875rem; font-weight: 600; color: var(--text-2); }
+.card .badge {
+  margin: 0; padding: 2px 9px; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 700;
+  background: var(--badge-bg); color: var(--badge-text);
+}
+.dl h3 { margin: 0; font-size: 1.25rem; }
+.card .desc { margin: 0; font-size: 0.9375rem; color: var(--text-2); }
+.card .file { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0; font-size: 0.875rem; color: var(--text-2); }
+.card .missing {
+  margin: 0; padding: 8px 10px; border-radius: 10px;
+  font-size: 0.875rem; background: var(--notice-bg); color: var(--notice-text);
+}
+.dl-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: auto; padding-top: 4px; }
+.btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-secondary:hover { background: var(--surface-2); color: var(--text); }
+.dl.is-recommended .btn-secondary { background: var(--btn); color: var(--btn-text); border-color: transparent; }
+.dl.is-recommended .btn-secondary:hover { background: var(--btn-hover); color: var(--btn-text); }
+/* A file the latest release does not contain yet: a plain label, not a link. */
+.btn[aria-disabled="true"], .btn[aria-disabled="true"]:hover {
+  background: var(--surface-2); color: var(--text-2); border-color: var(--border); cursor: default;
+}
+.sha {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 10px;
+  align-self: stretch; padding: 10px 12px; border-radius: 12px; background: var(--surface-2);
+}
+.card .sha-label {
+  grid-row: 1; grid-column: 1; margin: 0;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-2);
+}
+.sha-value {
+  grid-row: 2; grid-column: 1 / -1;
+  padding: 0; background: none; color: var(--text);
+  font-size: 0.75rem; line-height: 1.45; word-break: break-all;
+  -webkit-user-select: all; user-select: all;
+}
+.copy {
+  grid-row: 1; grid-column: 2;
+  min-height: 30px; padding: 4px 12px; border-radius: 8px; cursor: pointer;
+  font: inherit; font-size: 0.8125rem; font-weight: 600;
+  color: var(--link); background: var(--surface); border: 1px solid var(--border);
+}
+.copy:hover { background: var(--badge-bg); }
+.note { margin: 20px 0 0; font-size: 0.9375rem; color: var(--text-2); }
+.verify { margin-top: 16px; padding: 0 22px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+.verify summary { padding: 16px 0; font-weight: 600; cursor: pointer; }
+.verify[open] { padding-bottom: 18px; }
+.verify p { margin: 0 0 8px; color: var(--text-2); font-size: 0.9375rem; }
+.verify ul { margin: 0; padding-left: 1.15em; font-size: 0.9375rem; }
+.verify li + li { margin-top: 8px; }
+.card.ethics { background: var(--notice-bg); border-color: var(--notice-border); }
+.card.ethics h3, .card.ethics p { color: var(--notice-text); }
+
+/* Footer */
+.site-footer { padding: 32px 0 48px; border-top: 1px solid var(--border); font-size: 0.875rem; color: var(--text-2); }
+.site-footer p { margin: 0 0 12px; max-width: 72ch; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 0 18px; margin: 0 0 12px; padding: 0; list-style: none; }
+.footer-links a { display: inline-block; padding: 6px 0; }
+.fine { font-size: 0.8125rem; }
+
+@media (min-width: 600px) {
+  .features { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 720px) {
+  .wrap { padding: 0 32px; }
+  .section { padding: 36px 0 96px; }
+  .nav-list { gap: 0 40px; }
+  .grid.req-grid, .grid.install-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr); gap: 64px; padding: 72px 0 40px; }
+}
+@media (min-width: 960px) {
+  /* Two Mac builds on the first row, the three Android pieces on the second. */
+  .grid.dl-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .dl-grid > .dl { grid-column: span 2; }
+  .dl-grid > .dl.mac { grid-column: span 3; }
+}
+@media (min-width: 1000px) {
+  .features { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 719px) {
+  .nav-list { gap: 0 22px; }
+  .nav-list a { padding: 18px 0 14px; }
+}
+/* Browsers without :has show every section at once. The current name still gets the bar. */
+@supports not selector(:has(*)) {
+  .panel { display: block; animation: none; }
+  .nav-list a[aria-current="page"] { color: var(--text); }
+  .nav-list a[aria-current="page"]::after { transform: scaleX(1); }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="#overview">
+      <svg class="brand-mark" viewBox="0 0 100 116" aria-hidden="true" focusable="false">
+        <path d="M10 17.5Q10 14 13.5 14H22.5Q26 14 28.28 16.66L47.72 39.34Q50 42 52.28 39.34L71.72 16.66Q74 14 77.5 14H86.5Q90 14 90 17.5V68.5Q90 72 93.5 72H94.5Q98 72 98 75.5V78.5Q98 82 94.5 82H69.5Q66 82 66 78.5V75.5Q66 72 69.5 72H72.5Q76 72 76 68.5V37.5Q76 34 73.8 36.72L57.2 57.28Q55 60 51.5 60H48.5Q45 60 42.8 57.28L26.2 36.72Q24 34 24 37.5V68.5Q24 72 27.5 72H30.5Q34 72 34 75.5V78.5Q34 82 30.5 82H5.5Q2 82 2 78.5V75.5Q2 72 5.5 72H6.5Q10 72 10 68.5Z"/>
+        <path d="M40 66.5Q40 64 42.04 65.44L46.46 68.56Q48.5 70 48.5 72.5V101.5Q48.5 104 47.2 101.86L41.3 92.14Q40 90 40 87.5Z"/>
+        <path d="M60 66.5Q60 64 57.96 65.44L53.54 68.56Q51.5 70 51.5 72.5V101.5Q51.5 104 52.8 101.86L58.7 92.14Q60 90 60 87.5Z"/>
+      </svg>
+      <span>M Maps</span>
+    </a>
+    <a class="header-link" href="https://github.com/Mayoka-Labs/m-maps">GitHub</a>
+  </div>
+  <nav aria-label="Site" class="site-tabs">
+    <div class="wrap">
+      <ul class="nav-list">
+        <li><a id="tab-overview" href="#overview" aria-current="page">Overview</a></li>
+        <li><a id="tab-downloads" href="#downloads">Downloads</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a id="tab-requirements" href="#requirements">Requirements</a></li>
+        <li><a id="tab-privacy" href="#privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="panel" id="overview">
+  <div class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <img class="app-icon" src="/assets/app-icon-256.png" width="80" height="80" alt="">
+        <h1 id="hero-title">M Maps<span class="us" aria-hidden="true">_</span></h1>
+        <p class="lede">Set a USB-connected phone's simulated GPS location from your computer, for development and device testing. The full pack is Mac (Apple silicon and Intel), Windows, Linux, and the Android Companion.</p>
+        <div class="pack-block">
+          <p class="pack-label" id="pack-label">Full pack</p>
+          <ul class="pack" aria-labelledby="pack-label">
+            <li><a href="#dl-macArm">Mac · Apple silicon</a></li>
+            <li><a href="#dl-macIntel">Mac · Intel</a></li>
+            <li><a href="#dl-windows">Windows <span class="beta">Beta</span></a></li>
+            <li><a href="#dl-linux">Linux <span class="beta">Beta</span></a></li>
+            <li><a href="#dl-apk">Android Companion</a></li>
+          </ul>
+        </div>
+        <div class="cta">
+          <a class="btn btn-primary" id="hero-download" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-arm64.dmg">
+            <span class="btn-label" id="hero-label">Download for Mac</span>
+            <span class="btn-sub" id="hero-sub">Apple silicon</span>
+          </a>
+          <a class="alt-link" id="hero-alt" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-x86_64.dmg">Intel Mac? Download the Intel version</a>
+          <button class="btn btn-secondary" id="hero-share" type="button" hidden><span id="hero-share-label">Send this page to your computer</span></button>
+        </div>
+        <p class="hint" id="hero-hint">The full pack includes <code class="fname">M-Maps-arm64.dmg</code> for Apple silicon Macs, <code class="fname">M-Maps-x86_64.dmg</code> for Intel Macs, the Windows zip, the Linux archive, and the Android Companion. Windows and Linux are Beta.</p>
+        <p class="meta" id="release-meta">Free and open source. The Mac app is signed with an Apple Developer ID and notarized by Apple.</p>
+        <p class="status" id="release-status" role="status"></p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="map-frame">
+          <svg class="map-art" viewBox="0 0 520 400" focusable="false">
+            <rect class="m-land" width="520" height="400"/>
+            <rect class="m-park" x="122" y="172" width="56" height="56" rx="14"/>
+            <rect class="m-park" x="286" y="74" width="100" height="72" rx="16"/>
+            <path class="m-road-edge minor" d="M0 60H520M0 240H520M110 0V320M400 0V320M190 160V320"/>
+            <path class="m-road-edge" d="M0 160H520M270 0V340M14 0L110 60L270 160L398 240"/>
+            <path class="m-road minor" d="M0 60H520M0 240H520M110 0V320M400 0V320M190 160V320"/>
+            <path class="m-road" d="M0 160H520M270 0V340M14 0L110 60L270 160L398 240"/>
+            <path class="m-water" d="M0 300C70 282 128 318 206 312S338 330 402 352 486 366 520 356V400H0Z"/>
+            <path class="m-route-casing" d="M110 240V174Q110 160 124 160H256Q270 160 270 146V74Q270 60 284 60H400"/>
+            <path class="m-route" d="M110 240V174Q110 160 124 160H256Q270 160 270 146V74Q270 60 284 60H400"/>
+            <circle class="m-start" cx="110" cy="240" r="8"/>
+            <path class="m-pin" d="M400 58C394 48 382 38 382 26A18 18 0 1 1 418 26C418 38 406 48 400 58Z"/>
+            <circle class="m-pin-dot" cx="400" cy="26" r="6.5"/>
+            <circle class="m-halo" cx="270" cy="112" r="26"/>
+            <circle class="m-ring" cx="270" cy="112" r="11"/>
+            <circle class="m-dot" cx="270" cy="112" r="7.5"/>
+            <rect class="m-chip" x="22" y="332" width="200" height="44" rx="22"/>
+            <circle class="m-live" cx="46" cy="354" r="6"/>
+            <text class="m-chip-text" x="62" y="359">Holding location</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="features-title">
+    <div class="wrap">
+      <h2 id="features-title">What M Maps does<span class="us" aria-hidden="true">_</span></h2>
+      <p class="section-lede">One local app moves the phone's simulated location and holds it until you restore real GPS.</p>
+      <ul class="features">
+        <li class="feature">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 21s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0c0 5.3-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/></svg></div>
+          <h3>Teleport</h3>
+          <p>Pick a point on the map, confirm it, and the phone holds that location.</p>
+        </li>
+        <li class="feature">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></svg></div>
+          <h3>Routes</h3>
+          <p>Walk, bicycle, motorcycle, or drive along real roads at realistic speeds.</p>
+        </li>
+        <li class="feature">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 19c3-7 8-11 15-12" stroke-dasharray="2.5 3"/><path d="M15.5 4.5 19 7l-2.5 3.5"/></svg></div>
+          <h3>Flights</h3>
+          <p>Great-circle flights that land at the nearest passenger airport.</p>
+        </li>
+        <li class="feature">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="5" cy="17" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="19" cy="15" r="2"/><path d="m6.3 15.4 4.4-5.8M13.4 9.5l4.2 4"/></svg></div>
+          <h3>Multi-stop trips</h3>
+          <p>Ordered stops with optional waits, all on the same connection.</p>
+        </li>
+        <li class="feature">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg></div>
+          <h3>Restore GPS</h3>
+          <p>One click stops the simulation and hands the phone back to real GPS.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+  </section>
+
+  <section class="panel section" id="downloads" aria-labelledby="downloads-title">
+    <div class="wrap">
+      <h2 id="downloads-title">Downloads<span class="us" aria-hidden="true">_</span></h2>
+      <p class="section-lede">Built by the project's GitHub release workflow. Mac apps are signed with a Developer ID and notarized by Apple. The Windows and Linux packages are Beta, and the Android Companion is a preview build.</p>
+      <div class="grid dl-grid">
+        <article class="card dl mac" id="dl-macArm" data-asset="macArm" aria-labelledby="dl-macArm-title">
+          <div class="dl-top">
+            <p class="eyebrow">macOS</p>
+            <p class="badge" data-slot="badge" hidden>Recommended</p>
+          </div>
+          <h3 id="dl-macArm-title">Mac with Apple silicon</h3>
+          <p class="desc">For Macs with M1 or later. Controls an iPhone or an Android phone over USB.</p>
+          <p class="file"><code class="fname" data-slot="name">M-Maps-arm64.dmg</code><span data-slot="size"></span></p>
+          <p class="missing" data-slot="missing" hidden>Not in the latest release yet. It appears here as soon as a release includes it.</p>
+          <div class="dl-actions">
+            <div class="sha" data-slot="sha" hidden>
+              <p class="sha-label">SHA-256</p>
+              <code class="sha-value" data-slot="sha-value"></code>
+              <button class="copy" type="button" data-slot="copy"><span data-slot="copy-label">Copy</span><span class="visually-hidden" data-slot="copy-hint"> SHA-256 for M-Maps-arm64.dmg</span></button>
+            </div>
+            <a data-slot="checksum" hidden>SHA-256 checksum file</a>
+            <a class="btn btn-secondary" data-slot="link" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-arm64.dmg"><span data-slot="link-label">Download .dmg</span><span class="visually-hidden"> for Mac with Apple silicon</span></a>
+          </div>
+        </article>
+
+        <article class="card dl mac" id="dl-macIntel" data-asset="macIntel" aria-labelledby="dl-macIntel-title">
+          <div class="dl-top">
+            <p class="eyebrow">macOS</p>
+            <p class="badge" data-slot="badge" hidden>Recommended</p>
+          </div>
+          <h3 id="dl-macIntel-title">Mac with Intel processor</h3>
+          <p class="desc">The same app built for Intel Macs. Testing on Intel hardware is still in progress.</p>
+          <p class="file"><code class="fname" data-slot="name">M-Maps-x86_64.dmg</code><span data-slot="size"></span></p>
+          <p class="missing" data-slot="missing" hidden>Not in the latest release yet. It appears here as soon as a release includes it.</p>
+          <div class="dl-actions">
+            <div class="sha" data-slot="sha" hidden>
+              <p class="sha-label">SHA-256</p>
+              <code class="sha-value" data-slot="sha-value"></code>
+              <button class="copy" type="button" data-slot="copy"><span data-slot="copy-label">Copy</span><span class="visually-hidden" data-slot="copy-hint"> SHA-256 for M-Maps-x86_64.dmg</span></button>
+            </div>
+            <a data-slot="checksum" hidden>SHA-256 checksum file</a>
+            <a class="btn btn-secondary" data-slot="link" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-x86_64.dmg"><span data-slot="link-label">Download .dmg</span><span class="visually-hidden"> for Mac with Intel processor</span></a>
+          </div>
+        </article>
+
+        <article class="card dl" id="dl-windows" data-asset="windows" aria-labelledby="dl-windows-title">
+          <div class="dl-top">
+            <p class="eyebrow">Windows &middot; Beta</p>
+            <p class="badge" data-slot="badge" hidden>Recommended</p>
+          </div>
+          <h3 id="dl-windows-title">Windows (Beta)</h3>
+          <p class="desc">Beta. 64-bit host for Android phones and iPhones (iPhone needs iOS 17.4 or later and the Apple Devices app). Unzip, then run <code>run_m_maps.bat</code> in the MMaps folder.</p>
+          <p class="file"><code class="fname" data-slot="name">M-Maps-windows-x86_64.zip</code><span data-slot="size"></span></p>
+          <p class="missing" data-slot="missing" hidden>Not in the latest release yet. It appears here as soon as a release includes it.</p>
+          <div class="dl-actions">
+            <div class="sha" data-slot="sha" hidden>
+              <p class="sha-label">SHA-256</p>
+              <code class="sha-value" data-slot="sha-value"></code>
+              <button class="copy" type="button" data-slot="copy"><span data-slot="copy-label">Copy</span><span class="visually-hidden" data-slot="copy-hint"> SHA-256 for M-Maps-windows-x86_64.zip</span></button>
+            </div>
+            <a data-slot="checksum" hidden>SHA-256 checksum file</a>
+            <a class="btn btn-secondary" data-slot="link" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-windows-x86_64.zip"><span data-slot="link-label">Download .zip</span><span class="visually-hidden"> for Windows</span></a>
+          </div>
+        </article>
+
+        <article class="card dl" id="dl-linux" data-asset="linux" aria-labelledby="dl-linux-title">
+          <div class="dl-top">
+            <p class="eyebrow">Linux &middot; Beta</p>
+            <p class="badge" data-slot="badge" hidden>Recommended</p>
+          </div>
+          <h3 id="dl-linux-title">Linux (Beta)</h3>
+          <p class="desc">Beta. 64-bit x86 host for Android phones and iPhones (iPhone needs iOS 17.4 or later and usbmuxd). Extract, then run <code>./run_m_maps.sh</code> in the MMaps folder.</p>
+          <p class="file"><code class="fname" data-slot="name">M-Maps-linux-x86_64.tar.gz</code><span data-slot="size"></span></p>
+          <p class="missing" data-slot="missing" hidden>Not in the latest release yet. It appears here as soon as a release includes it.</p>
+          <div class="dl-actions">
+            <div class="sha" data-slot="sha" hidden>
+              <p class="sha-label">SHA-256</p>
+              <code class="sha-value" data-slot="sha-value"></code>
+              <button class="copy" type="button" data-slot="copy"><span data-slot="copy-label">Copy</span><span class="visually-hidden" data-slot="copy-hint"> SHA-256 for M-Maps-linux-x86_64.tar.gz</span></button>
+            </div>
+            <a data-slot="checksum" hidden>SHA-256 checksum file</a>
+            <a class="btn btn-secondary" data-slot="link" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-linux-x86_64.tar.gz"><span data-slot="link-label">Download .tar.gz</span><span class="visually-hidden"> for Linux</span></a>
+          </div>
+        </article>
+
+        <article class="card dl" id="dl-apk" data-asset="apk" aria-labelledby="dl-apk-title">
+          <div class="dl-top">
+            <p class="eyebrow">Android phone</p>
+            <p class="badge" data-slot="badge" hidden>Recommended</p>
+          </div>
+          <h3 id="dl-apk-title">M Maps Companion</h3>
+          <p class="desc">Install it on the phone, open it once to allow location, then select it under Developer options &gt; Mock location app.</p>
+          <p class="file"><code class="fname" data-slot="name">M-Maps-android-companion.apk</code><span data-slot="size"></span></p>
+          <p class="missing" data-slot="missing" hidden>Not in the latest release yet. It appears here as soon as a release includes it.</p>
+          <div class="dl-actions">
+            <div class="sha" data-slot="sha" hidden>
+              <p class="sha-label">SHA-256</p>
+              <code class="sha-value" data-slot="sha-value"></code>
+              <button class="copy" type="button" data-slot="copy"><span data-slot="copy-label">Copy</span><span class="visually-hidden" data-slot="copy-hint"> SHA-256 for M-Maps-android-companion.apk</span></button>
+            </div>
+            <a data-slot="checksum" hidden>SHA-256 checksum file</a>
+            <a class="btn btn-secondary" data-slot="link" href="https://github.com/Mayoka-Labs/m-maps/releases/latest/download/M-Maps-android-companion.apk"><span data-slot="link-label">Download .apk</span><span class="visually-hidden"> for the M Maps Companion</span></a>
+          </div>
+        </article>
+      </div>
+      <p class="note" id="downloads-note">The buttons download the newest release. Each file's SHA-256 checksum is shown with it when the release details load. Looking for an older version? <a href="https://github.com/Mayoka-Labs/m-maps/releases">All releases</a></p>
+      <p class="note" id="short-links">One-click links to share: <a href="/mac">m-maps.mayoka.io/mac</a> (Intel: <a href="/mac-intel">/mac-intel</a>), <a href="/windows">/windows</a>, <a href="/linux">/linux</a>, and <a href="/android">/android</a> for the Companion. Each one downloads the newest file at once.</p>
+      <details class="verify">
+        <summary>How to check a download</summary>
+        <p>Compare the SHA-256 shown for the file with the output of:</p>
+        <ul>
+          <li>Mac: <code>shasum -a 256 ~/Downloads/M-Maps-arm64.dmg</code></li>
+          <li>Windows PowerShell: <code>Get-FileHash .\M-Maps-windows-x86_64.zip -Algorithm SHA256</code></li>
+          <li>Linux: <code>sha256sum M-Maps-linux-x86_64.tar.gz</code></li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <section class="panel section" id="install" aria-labelledby="install-title">
+    <div class="wrap">
+      <h2 id="install-title">Install in three steps<span class="us" aria-hidden="true">_</span></h2>
+      <p class="section-lede">When the download finishes, follow the steps for the computer or phone you downloaded it to. Then connect the phone with a USB cable; <a href="#requirements">Requirements</a> lists what the phone needs.</p>
+      <div class="grid install-grid">
+        <article class="card install" id="install-mac" aria-labelledby="install-mac-title">
+          <div class="dl-top">
+            <p class="eyebrow">macOS</p>
+            <p class="badge" id="install-mac-badge" hidden>Your next step</p>
+          </div>
+          <h3 id="install-mac-title">Mac</h3>
+          <ol class="steps">
+            <li>Open the downloaded <code class="fname">.dmg</code> file from your Downloads folder.</li>
+            <li>Drag M Maps onto the Applications folder in the window that opens.</li>
+            <li>Open M Maps from Applications. If macOS asks about an app downloaded from the internet, choose Open. M Maps asks for your administrator password each time it starts.</li>
+          </ol>
+          <p class="install-note">For an Android phone, also install adb on the Mac, for example with <code>brew install android-platform-tools</code>.</p>
+        </article>
+        <article class="card install" id="install-windows" aria-labelledby="install-windows-title">
+          <div class="dl-top">
+            <p class="eyebrow">Windows &middot; Beta</p>
+            <p class="badge" id="install-windows-badge" hidden>Your next step</p>
+          </div>
+          <h3 id="install-windows-title">Windows</h3>
+          <ol class="steps">
+            <li>In your Downloads folder, right-click <code class="fname">M-Maps-windows-x86_64.zip</code> and choose Extract All. If the browser warns about the download, choose Keep.</li>
+            <li>Open the extracted MMaps folder and double-click <code class="fname">run_m_maps.bat</code>. If Windows says &ldquo;Windows protected your PC&rdquo;, choose More info, then Run anyway: the Beta build is not code-signed yet.</li>
+            <li>M Maps opens in your web browser; if it does not, go to <code>http://127.0.0.1:8765</code>. Keep the black M Maps window open while you use it, and do not click inside it.</li>
+          </ol>
+          <p class="install-note">For an iPhone, first install Apple Devices from the Microsoft Store. For an Android phone, install <a href="https://developer.android.com/tools/releases/platform-tools">Android platform-tools</a> and add its folder to Path. If the phone does not show up, install its maker&rsquo;s USB driver: the Samsung Android USB Driver for a Samsung phone, the Google USB Driver for a Pixel.</p>
+        </article>
+        <article class="card install" id="install-linux" aria-labelledby="install-linux-title">
+          <div class="dl-top">
+            <p class="eyebrow">Linux &middot; Beta</p>
+            <p class="badge" id="install-linux-badge" hidden>Your next step</p>
+          </div>
+          <h3 id="install-linux-title">Linux</h3>
+          <ol class="steps">
+            <li>Install the phone tools: usbmuxd for an iPhone, adb for an Android phone. On Debian or Ubuntu: <code>sudo apt install usbmuxd adb</code> and, for Android, <code>sudo usermod -aG plugdev "$USER"</code>, then log out and back in. On Fedora: <code>sudo dnf install usbmuxd android-tools</code></li>
+            <li>In a terminal, extract and start it: <code>tar -xzf ~/Downloads/M-Maps-linux-x86_64.tar.gz</code>, then <code>./MMaps/run_m_maps.sh</code></li>
+            <li>M Maps opens in your web browser; if it does not, go to <code>http://127.0.0.1:8765</code>. Keep the terminal open while you use it.</li>
+          </ol>
+          <p class="install-note">Needs a 64-bit x86 PC with a recent system: Ubuntu 24.04, Debian 13, Fedora 40 or newer.</p>
+        </article>
+        <article class="card install" id="install-android" aria-labelledby="install-android-title">
+          <div class="dl-top">
+            <p class="eyebrow">Android phone</p>
+            <p class="badge" id="install-android-badge" hidden>Your next step</p>
+          </div>
+          <h3 id="install-android-title">M Maps Companion</h3>
+          <ol class="steps">
+            <li>Show Developer options by tapping Build number seven times (Settings &gt; About phone, or About phone &gt; Software information on Samsung), then turn on USB debugging there. On a Samsung phone, also turn off Auto Blocker.</li>
+            <li>Install the app. Downloaded on the phone: open <code class="fname">M-Maps-android-companion.apk</code> from its Downloads; if Android asks, allow that app to install apps, and if Play Protect warns, choose Install anyway. Downloaded on the computer: plug the phone in, tap Allow on the USB debugging prompt, then in the folder with the file run <code>adb install M-Maps-android-companion.apk</code></li>
+            <li>Open M Maps Companion and allow location access. Then, in Developer options, choose M Maps Companion as the Mock location app.</li>
+          </ol>
+          <p class="install-note">Needs Android 8 or later and M Maps running on a computer. Keep the phone plugged in and tap Allow if it asks to allow USB debugging.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel section" id="requirements" aria-labelledby="requirements-title">
+    <div class="wrap">
+      <h2 id="requirements-title">Requirements<span class="us" aria-hidden="true">_</span></h2>
+      <p class="section-lede">M Maps controls one phone at a time over a USB cable.</p>
+      <div class="grid req-grid">
+        <article class="card" aria-labelledby="req-mac">
+          <h3 id="req-mac">Mac app</h3>
+          <ul>
+            <li>macOS 12 Monterey or later.</li>
+            <li>Apple silicon or Intel. Apple silicon is tested; Intel hardware testing is in progress.</li>
+            <li>Open the DMG and drag M Maps to Applications.</li>
+            <li>Your administrator password each time M Maps starts.</li>
+          </ul>
+        </article>
+        <article class="card" aria-labelledby="req-iphone">
+          <h3 id="req-iphone">iPhone</h3>
+          <ul>
+            <li>iOS 17 or later on a Mac (iOS 17.4 or later on Windows or Linux), connected by USB.</li>
+            <li>Unlocked, with Trust This Computer accepted.</li>
+            <li>Developer Mode on: Settings &gt; Privacy &amp; Security &gt; Developer Mode.</li>
+            <li>On Windows, install the Apple Devices app from the Microsoft Store. On Linux, install usbmuxd. The Windows and Linux builds are Beta.</li>
+            <li>On Windows and Linux, M Maps asks once before it downloads the Developer Disk Image. Your phone&rsquo;s identifiers go to Apple&rsquo;s signing server for that download.</li>
+          </ul>
+        </article>
+        <article class="card" aria-labelledby="req-android">
+          <h3 id="req-android">Android phone</h3>
+          <ul>
+            <li>USB debugging on, with this computer approved on the phone.</li>
+            <li>M Maps Companion installed and chosen under Developer options &gt; Mock location app.</li>
+            <li>Android 8 or later.</li>
+            <li>Android platform-tools (adb) installed on the computer: <code>brew install android-platform-tools</code> on a Mac, <code>sudo apt install adb</code> on Debian or Ubuntu, or <a href="https://developer.android.com/tools/releases/platform-tools">Google&rsquo;s download</a> with its folder added to Path on Windows.</li>
+            <li>Tested on a Samsung Galaxy A15 with Android 16. Other phones may behave differently.</li>
+          </ul>
+        </article>
+        <article class="card" aria-labelledby="req-pc">
+          <h3 id="req-pc">Windows and Linux</h3>
+          <ul>
+            <li>A 64-bit x86 (x86_64) computer. On Linux, Ubuntu 24.04, Debian 13, Fedora 40 or newer.</li>
+            <li>Android phones and iPhones. iPhone needs iOS 17.4 or later, plus the Apple Devices app on Windows or usbmuxd on Linux.</li>
+            <li>Beta builds: launch-tested by the release workflow, with real-device testing still in progress.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel section" id="privacy" aria-labelledby="privacy-title">
+    <div class="wrap">
+      <h2 id="privacy-title">Privacy and responsible use<span class="us" aria-hidden="true">_</span></h2>
+      <div class="grid two">
+        <article class="card" aria-labelledby="privacy-app">
+          <h3 id="privacy-app">Privacy</h3>
+          <p>M Maps has no telemetry and collects no user data. The phone connection stays between your computer and its USB cable.</p>
+          <p>This page has no analytics, cookies, or trackers. Your browser asks GitHub's public API for the latest release details, and the download buttons fetch files directly from GitHub.</p>
+          <p>Inside the app, maps, search, and routes come from separate services that are <a href="https://github.com/Mayoka-Labs/m-maps#network-and-privacy-notes">listed in the README</a>.</p>
+        </article>
+        <article class="card ethics" aria-labelledby="privacy-ethics">
+          <h3 id="privacy-ethics">Educational use only</h3>
+          <p>M Maps is for educational device testing on phones you own or are allowed to test. Do not use it to deceive, defraud, or evade tracking.</p>
+          <p>A simulated location affects apps and services on the phone. You are responsible for following the law and the terms of the services you use.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="next" id="next-steps" hidden>
+  <div class="next-body">
+    <p class="next-title" id="next-title">Your download should start now.</p>
+    <p class="next-links"><a id="next-link" href="#install">Next: install M Maps</a><a id="next-again" href="#downloads">Didn&rsquo;t start? Download again</a></p>
+  </div>
+  <button class="next-close" id="next-close" type="button" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>M Maps is open source under the MIT License, developed and maintained by Mayoka Labs.</p>
+    <p>The downloadable apps include GPL-3.0-or-later components and are distributed under the GPL-3.0-or-later. Each download carries the full license texts, and the source for each release is its Git tag.</p>
+    <ul class="footer-links">
+      <li><a href="https://github.com/Mayoka-Labs/m-maps">Source code</a></li>
+      <li><a href="https://github.com/Mayoka-Labs/m-maps/releases">All releases</a></li>
+      <li><a href="https://github.com/Mayoka-Labs/m-maps/blob/main/SECURITY.md">Security</a></li>
+      <li><a href="https://github.com/Mayoka-Labs/m-maps/blob/main/LICENSE">License</a></li>
+    </ul>
+    <p class="fine">Apple, iPhone, Mac, and macOS are trademarks of Apple Inc. Android is a trademark of Google LLC. M Maps is not affiliated with or endorsed by Apple or Google.</p>
+  </div>
+</footer>
+
+<p class="visually-hidden" id="live" aria-live="polite"></p>
+<script src="/release.js"></script>
+<script>
+(function () {
+  "use strict";
+  // Progressive enhancement: every download link already points at GitHub's
+  // "latest release" redirect for its exact file, so without this script (or if
+  // anything below is unavailable) a click still downloads the file. The script
+  // only adds the version, sizes and checksums from GitHub's release API, and
+  // turns the button of a file the release does not contain into a plain label.
+  var R = window.MMapsRelease;
+  if (!R || typeof window.fetch !== "function" || typeof window.Promise !== "function"
+      || typeof document.querySelector !== "function") {
+    return;
+  }
+
+  var HERO_LABELS = {
+    macArm: "Download for Mac",
+    macIntel: "Download for Mac",
+    windows: "Download for Windows",
+    linux: "Download for Linux",
+    apk: "Download the Companion"
+  };
+  var HERO_KINDS = {
+    macArm: "Apple silicon",
+    macIntel: "Intel",
+    windows: "Android and iPhone · Beta",
+    linux: "Android and iPhone · Beta",
+    apk: "Android app"
+  };
+  var CARD_LABELS = {
+    macArm: "Download .dmg",
+    macIntel: "Download .dmg",
+    windows: "Download .zip",
+    linux: "Download .tar.gz",
+    apk: "Download .apk"
+  };
+  var HERO_NAMES = {
+    macArm: "The Apple silicon Mac download",
+    macIntel: "The Intel Mac download",
+    windows: "The Windows download",
+    linux: "The Linux download",
+    apk: "The Companion app"
+  };
+  var ALT_NAMES = { macArm: "Apple silicon Mac?", macIntel: "Intel Mac?" };
+  // After a download click: where the next step is, by install guide.
+  var NEXT_LABELS = {
+    mac: "Next: install M Maps on your Mac",
+    windows: "Next: start M Maps on Windows",
+    linux: "Next: start M Maps on Linux",
+    android: "Next: set up the Companion on your phone"
+  };
+  var INSTALL_IDS = ["mac", "windows", "linux", "android"];
+  // The address a phone visitor sends to the computer the phone connects to.
+  var PAGE_URL = "https://m-maps.mayoka.io/";
+  var SHARE_LABELS = {
+    ios: "Send this page to your computer",
+    android: "Send this page to your computer"
+  };
+  var UNAVAILABLE_LABEL = "Not in this release yet";
+  var META_DEFAULT = "Free and open source. The Mac app is signed with an Apple Developer ID and notarized by Apple.";
+  var MESSAGES = {
+    rate: "GitHub's limit for release lookups from your network was reached, so sizes and checksums are not shown. The download buttons use the latest release's files.",
+    none: "No release has been published yet, so there is nothing to download right now.",
+    empty: "The latest release does not include these downloads yet. They will appear here when a release includes them.",
+    failed: "Release details could not be loaded right now, so sizes and checksums are not shown. The download buttons use the latest release's files."
+  };
+
+  // assets: null until GitHub's API answers (or when it could not); then one
+  // entry per download, null for a file the release does not contain.
+  var state = { platform: null, assets: null, release: null, pageUrl: R.RELEASES_PAGE, hashes: {} };
+
+  function byId(id) { return document.getElementById(id); }
+  function cardFor(key) { return byId("dl-" + key); }
+  function slot(root, name) { return root ? root.querySelector('[data-slot="' + name + '"]') : null; }
+  function setText(node, text) { if (node) { node.textContent = text; } }
+  function setHidden(node, hidden) { if (node) { node.hidden = hidden; } }
+  // GitHub's redirect for the newest release's file, or null if it is not this
+  // repository's expected URL (it always is; the check keeps the rule in one place).
+  function latestUrl(key) {
+    var url = R.latestDownloadUrl(key);
+    return url && R.isTrustedLatestDownloadUrl(url, R.ASSET_NAMES[key]) ? url : null;
+  }
+  // A link that works: it has a destination and is not marked disabled.
+  function setHref(node, url) {
+    if (!node || !url) { return; }
+    node.setAttribute("href", url);
+    node.removeAttribute("aria-disabled");
+    node.removeAttribute("role");
+  }
+  // A file the release does not contain: a label, not a link. No href means no
+  // click can lead anywhere; role and aria-disabled keep it announced as unavailable.
+  function setUnavailable(node) {
+    if (!node) { return; }
+    node.removeAttribute("href");
+    node.setAttribute("role", "link");
+    node.setAttribute("aria-disabled", "true");
+  }
+  // The asset's own URL from the API, else the latest-release redirect.
+  function downloadUrl(key) {
+    var asset = state.assets ? state.assets[key] : null;
+    return asset ? asset.url : latestUrl(key);
+  }
+  // True only once GitHub answered and the release has no such file.
+  function missing(key) {
+    return !!state.assets && !state.assets[key];
+  }
+
+  function showStatus(message) {
+    var node = byId("release-status");
+    if (!node) { return; }
+    node.textContent = message || "";
+    node.className = message ? "status is-visible" : "status";
+  }
+
+  function navigatorFacts() {
+    var nav = window.navigator || {};
+    var uaData = nav.userAgentData;
+    return {
+      userAgent: nav.userAgent,
+      platform: nav.platform,
+      maxTouchPoints: nav.maxTouchPoints,
+      uaPlatform: uaData && typeof uaData.platform === "string" ? uaData.platform : ""
+    };
+  }
+
+  // Chromium can report the CPU architecture; Safari and Firefox cannot, so
+  // a Mac then stays "unknown architecture" and Apple silicon leads.
+  function refinePlatform(facts) {
+    var uaData = window.navigator && window.navigator.userAgentData;
+    if (!uaData || typeof uaData.getHighEntropyValues !== "function") {
+      return Promise.resolve(null);
+    }
+    var hints;
+    try {
+      hints = uaData.getHighEntropyValues(["architecture"]);
+    } catch (error) {
+      return Promise.resolve(null);
+    }
+    var timeout = new Promise(function (resolve) { setTimeout(function () { resolve(null); }, 1500); });
+    return Promise.race([Promise.resolve(hints).then(function (values) {
+      if (!values || typeof values.architecture !== "string") { return null; }
+      var refined = {};
+      for (var key in facts) {
+        if (Object.prototype.hasOwnProperty.call(facts, key)) { refined[key] = facts[key]; }
+      }
+      refined.architecture = values.architecture;
+      return R.detectPlatform(refined);
+    }, function () { return null; }), timeout]);
+  }
+
+  function failure(kind) {
+    var error = new Error(kind);
+    error.kind = kind;
+    return error;
+  }
+
+  function loadRelease() {
+    var controller = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = controller ? setTimeout(function () { controller.abort(); }, 10000) : 0;
+    var options = {
+      headers: { Accept: "application/vnd.github+json" },
+      credentials: "omit",
+      referrerPolicy: "no-referrer"
+    };
+    if (controller) { options.signal = controller.signal; }
+    return window.fetch(R.API_LATEST, options).then(function (response) {
+      clearTimeout(timer);
+      if (response.status === 403 || response.status === 429) { throw failure("rate"); }
+      if (response.status === 404) { throw failure("none"); }
+      if (!response.ok) { throw failure("failed"); }
+      return response.json().catch(function () { throw failure("failed"); });
+    }, function () {
+      clearTimeout(timer);
+      throw failure("failed");
+    }).then(function (release) {
+      if (!R.isUsableRelease(release)) { throw failure("failed"); }
+      return release;
+    });
+  }
+
+  function heroHint(platform, pick) {
+    if (!pick.primary) {
+      if (platform.os === "linux") {
+        return "The Linux build runs only on 64-bit x86 (x86_64) computers, so there is no download for this Arm computer yet. A Mac, or an x86_64 Windows or Linux computer (Beta), can control your phone.";
+      }
+      if (platform.os === "windows") {
+        return "The Windows build is made for 64-bit x86 (x64) PCs and has not been tested on Windows on Arm. A Mac, or an x64 Windows or Linux computer (Beta), can control your phone.";
+      }
+      return "Choose the download for the computer your phone connects to. The Mac app controls iPhone and Android phones; the Windows and Linux builds (Beta) control Android phones and iPhones.";
+    }
+    if (platform.os === "windows" || platform.os === "linux") {
+      return "This Beta build controls Android phones and iPhones. iPhone needs iOS 17.4 or later and, on Windows, the Apple Devices app, or on Linux, usbmuxd.";
+    }
+    if (platform.os === "android") {
+      return "Install the Companion on this phone, then run M Maps on a computer connected by USB.";
+    }
+    if (platform.os === "ios") {
+      return "M Maps runs on the computer your iPhone plugs into: a Mac, or a Windows or Linux PC (Beta, iOS 17.4 or later). Send this page there to download it.";
+    }
+    if (pick.primary === "macIntel") {
+      return "This is the Intel build. To check your Mac, choose Apple menu > About This Mac: “Chip” means Apple silicon, “Processor” means Intel.";
+    }
+    if (pick.archKnown) {
+      return "This is the Apple silicon build, for Macs with M1 or later.";
+    }
+    return "This is the Apple silicon build. Not sure which Mac you have? Choose Apple menu > About This Mac: “Chip” means Apple silicon, “Processor” means Intel.";
+  }
+
+  function altLinkText(key) {
+    return key === "macIntel"
+      ? "Intel Mac? Download the Intel version"
+      : "Apple silicon Mac? Download that version";
+  }
+
+  function renderHero() {
+    var platform = state.platform;
+    var assets = state.assets;
+    var pick = R.recommendDownload(platform);
+    var primaryMissing = !!pick.primary && missing(pick.primary);
+    var primary = pick.primary && assets ? assets[pick.primary] : null;
+    var alt = byId("hero-alt");
+    var hideAlt = false;
+
+    if (pick.primary && !primaryMissing) {
+      setHref(byId("hero-download"), downloadUrl(pick.primary));
+      setText(byId("hero-label"), HERO_LABELS[pick.primary]);
+      var details = [HERO_KINDS[pick.primary]];
+      if (primary && primary.size !== null) { details.push(R.formatBytes(primary.size)); }
+      setText(byId("hero-sub"), details.join(" · "));
+    } else if (pick.primary) {
+      // GitHub answered and the latest release does not contain the file for
+      // this device: say so and offer the list instead of a dead button.
+      setHref(byId("hero-download"), "#downloads");
+      setText(byId("hero-label"), "See all downloads");
+      setText(byId("hero-sub"), HERO_KINDS[pick.primary] + " · " + UNAVAILABLE_LABEL);
+    } else {
+      // No download fits this device (an Arm PC, ChromeOS, or an unknown
+      // system): point at the full list instead of guessing.
+      setHref(byId("hero-download"), "#downloads");
+      setText(byId("hero-label"), "See all downloads");
+      setText(byId("hero-sub"), "Mac, Windows, Linux, and Android");
+    }
+
+    var altKey = pick.alternate;
+    var altAsset = altKey && assets ? assets[altKey] : null;
+    if (!pick.primary || primaryMissing) {
+      // The hero button already opens the list; keep this link only for an
+      // alternate download that really exists.
+      hideAlt = !altAsset;
+      if (altAsset) {
+        setHref(alt, altAsset.url);
+        setText(alt, altLinkText(altKey));
+      }
+    } else if (altKey && missing(altKey)) {
+      setHref(alt, "#dl-" + altKey);
+      setText(alt, ALT_NAMES[altKey] + " " + UNAVAILABLE_LABEL);
+    } else if (altKey) {
+      setHref(alt, downloadUrl(altKey));
+      setText(alt, altLinkText(altKey));
+    } else {
+      setHref(alt, "#downloads");
+      setText(alt, "All downloads");
+    }
+    setHidden(alt, hideAlt);
+
+    renderShare(platform);
+
+    setText(byId("hero-hint"), primaryMissing
+      ? HERO_NAMES[pick.primary] + " is not in the latest release yet. See all downloads for what is available."
+      : heroHint(platform, pick));
+
+    for (var i = 0; i < R.ASSET_KEYS.length; i++) {
+      var key = R.ASSET_KEYS[i];
+      var card = cardFor(key);
+      var recommended = key === pick.primary && !missing(key);
+      if (card) { card.classList.toggle("is-recommended", recommended); }
+      setHidden(slot(card, "badge"), !recommended);
+    }
+  }
+
+  // A phone cannot run M Maps itself: offer to send this page to the computer.
+  function canShare() {
+    var nav = window.navigator || {};
+    return typeof nav.share === "function"
+      || !!(nav.clipboard && typeof nav.clipboard.writeText === "function");
+  }
+
+  function renderShare(platform) {
+    var button = byId("hero-share");
+    var label = platform && SHARE_LABELS[platform.os];
+    if (!button) { return; }
+    var shown = !!label && canShare();
+    // An iPhone cannot open the Mac download, so sending the page to the Mac
+    // becomes the main button there; the Mac files stay in the list below.
+    var sendFirst = shown && platform.os === "ios";
+    if (shown && !state.shareBusy) { setText(byId("hero-share-label"), label); }
+    setHidden(button, !shown);
+    button.className = sendFirst ? "btn btn-primary" : "btn btn-secondary";
+    if (sendFirst) {
+      setHidden(byId("hero-download"), true);
+      setHidden(byId("hero-alt"), true);
+    } else {
+      setHidden(byId("hero-download"), false);
+    }
+  }
+
+  function wireShare() {
+    var button = byId("hero-share");
+    if (!button) { return; }
+    var reset = 0;
+    function done(text) {
+      setText(byId("hero-share-label"), text);
+      setText(byId("live"), text);
+      clearTimeout(reset);
+      reset = setTimeout(function () {
+        state.shareBusy = false;
+        setText(byId("live"), "");
+        renderShare(state.platform);
+      }, 2500);
+    }
+    function copyLink(nav) {
+      if (nav.clipboard && typeof nav.clipboard.writeText === "function") {
+        nav.clipboard.writeText(PAGE_URL).then(function () {
+          done("Link copied");
+        }, function () {
+          done("Couldn’t copy the link");
+        });
+      } else {
+        done("Couldn’t share the link");
+      }
+    }
+    button.addEventListener("click", function () {
+      var nav = window.navigator || {};
+      state.shareBusy = true;
+      if (typeof nav.share === "function") {
+        // The share sheet is its own confirmation, and closing it is not an
+        // error. Any other failure (a browser that refuses it) copies the link.
+        Promise.resolve().then(function () {
+          return nav.share({ title: "Download M Maps", url: PAGE_URL });
+        }).then(function () {
+          state.shareBusy = false;
+        }, function (error) {
+          if (error && error.name === "AbortError") {
+            state.shareBusy = false;
+          } else {
+            copyLink(nav);
+          }
+        });
+        return;
+      }
+      copyLink(nav);
+    });
+  }
+
+  // A click on a download lets the browser download as usual and then shows
+  // what to do next. Labels, "#downloads" and pages never count as downloads.
+  function showNextSteps(url, trigger) {
+    var key = R.keyForDownloadUrl(url);
+    var guide = key ? R.INSTALL_GUIDES[key] : null;
+    if (!guide) { return; }
+    var file = url.slice(url.lastIndexOf("/") + 1);
+    setText(byId("next-title"), "Your download of " + file + " should start now.");
+    setHref(byId("next-link"), "#install-" + guide);
+    setText(byId("next-link"), NEXT_LABELS[guide]);
+    setHref(byId("next-again"), url);
+    setHidden(byId("next-steps"), false);
+    setPageRoom(true);
+    state.nextTrigger = trigger || null;
+    // Move keyboard focus to the next step (no scroll; the download goes on).
+    var next = byId("next-link");
+    if (next && typeof next.focus === "function") { next.focus({ preventScroll: true }); }
+    for (var i = 0; i < INSTALL_IDS.length; i++) {
+      var current = INSTALL_IDS[i] === guide;
+      var card = byId("install-" + INSTALL_IDS[i]);
+      if (card) { card.classList.toggle("is-current", current); }
+      setHidden(byId("install-" + INSTALL_IDS[i] + "-badge"), !current);
+    }
+    setText(byId("live"), "Download started. " + NEXT_LABELS[guide] + ", in the Install section.");
+  }
+
+  function setPageRoom(on) {
+    var html = document.documentElement;
+    if (html && html.classList) { html.classList.toggle("has-next", on); }
+  }
+
+  function hideNextSteps() {
+    var bar = byId("next-steps");
+    var active = document.activeElement;
+    var hadFocus = !!(bar && active && typeof bar.contains === "function" && bar.contains(active));
+    setHidden(bar, true);
+    setPageRoom(false);
+    // Focus was in the bar: hand it back to the download that opened it.
+    if (hadFocus && state.nextTrigger && typeof state.nextTrigger.focus === "function") {
+      state.nextTrigger.focus({ preventScroll: true });
+    }
+  }
+
+  // The bar under the current name follows the address. This only keeps
+  // aria-current in step with it; the sections themselves switch with the hash.
+  function wireTabs() {
+    if (typeof document.addEventListener !== "function" || typeof window.addEventListener !== "function") {
+      return;
+    }
+    var names = ["overview", "downloads", "install", "requirements", "privacy"];
+    function linkFor(name) {
+      var node = byId("tab-" + name);
+      if (node) { return node; }
+      if (typeof document.querySelector !== "function") { return null; }
+      return document.querySelector('.nav-list a[href="#' + name + '"]');
+    }
+    function currentName() {
+      var hash = window.location && typeof location.hash === "string" ? location.hash : "";
+      var id = hash.charAt(0) === "#" ? hash.slice(1) : hash;
+      if (id === "downloads" || id.indexOf("dl-") === 0 || id === "short-links" || id === "downloads-note") {
+        return "downloads";
+      }
+      if (id.indexOf("install") === 0) { return "install"; }
+      if (id === "requirements" || id.indexOf("req-") === 0) { return "requirements"; }
+      if (id.indexOf("privacy") === 0) { return "privacy"; }
+      return "overview";
+    }
+    function mark() {
+      var name = currentName();
+      for (var i = 0; i < names.length; i++) {
+        var link = linkFor(names[i]);
+        if (!link) { continue; }
+        if (names[i] === name) { link.setAttribute("aria-current", "page"); }
+        else { link.removeAttribute("aria-current"); }
+      }
+    }
+    mark();
+    window.addEventListener("hashchange", mark);
+  }
+
+  function wireNextSteps() {
+    var close = byId("next-close");
+    if (close) { close.addEventListener("click", hideNextSteps); }
+    if (typeof document.addEventListener === "function") {
+      document.addEventListener("keydown", function (event) {
+        var bar = byId("next-steps");
+        if (event && event.key === "Escape" && bar && !bar.hidden) { hideNextSteps(); }
+      });
+    }
+  }
+
+  function wireDownloadLinks() {
+    var links = [byId("hero-download"), byId("hero-alt")];
+    for (var i = 0; i < R.ASSET_KEYS.length; i++) {
+      links.push(slot(cardFor(R.ASSET_KEYS[i]), "link"));
+    }
+    links.forEach(function (link) {
+      if (!link) { return; }
+      link.addEventListener("click", function () {
+        // Read the address at click time: the release lookup may have changed it.
+        var url = link.getAttribute("href");
+        if (url) { showNextSteps(url, link); }
+      });
+    });
+  }
+
+  function renderCard(key, asset) {
+    var card = cardFor(key);
+    if (!card) { return; }
+    var link = slot(card, "link");
+    var checksum = slot(card, "checksum");
+    var fileName = asset ? asset.name : R.ASSET_NAMES[key];
+    state.hashes[key] = asset && asset.sha256 ? asset.sha256 : "";
+    // The real file name (the Apple silicon download of v1.0.6 is "M.Maps.dmg").
+    setText(slot(card, "name"), fileName);
+    setText(slot(card, "copy-hint"), " SHA-256 for " + fileName);
+    if (asset) {
+      setHref(link, asset.url);
+      setText(slot(card, "link-label"), CARD_LABELS[key]);
+      setText(slot(card, "size"), asset.size !== null ? R.formatBytes(asset.size) : "");
+      setHidden(slot(card, "missing"), true);
+      setText(slot(card, "sha-value"), asset.sha256 || "");
+      setHidden(slot(card, "sha"), !asset.sha256);
+      if (!asset.sha256 && asset.checksumUrl) {
+        setHref(checksum, asset.checksumUrl);
+        setHidden(checksum, false);
+      } else {
+        setHidden(checksum, true);
+      }
+    } else {
+      // Not in this release: a plain label, never a link to somewhere else.
+      setUnavailable(link);
+      setText(slot(card, "link-label"), UNAVAILABLE_LABEL);
+      setText(slot(card, "size"), "");
+      setHidden(slot(card, "missing"), false);
+      setHidden(slot(card, "sha"), true);
+      setHidden(checksum, true);
+    }
+  }
+
+  function renderMeta(release) {
+    var meta = byId("release-meta");
+    if (!meta) { return; }
+    var version = R.releaseVersion(release);
+    // Both name the UTC calendar day, so the text and datetime always agree.
+    var dateText = R.formatDate(release.published_at, undefined, "UTC");
+    var day = R.isoDay(release.published_at);
+    meta.textContent = "";
+    meta.appendChild(document.createTextNode(version ? "Version " + version : "Latest release"));
+    if (dateText && day) {
+      meta.appendChild(document.createTextNode(" · Released "));
+      var time = document.createElement("time");
+      time.setAttribute("datetime", day);
+      time.textContent = dateText;
+      meta.appendChild(time);
+    }
+    meta.appendChild(document.createTextNode(" · "));
+    var notes = document.createElement("a");
+    notes.setAttribute("href", state.pageUrl);
+    notes.textContent = "Release notes";
+    meta.appendChild(notes);
+  }
+
+  function wireCopyButtons() {
+    var clipboard = window.navigator && window.navigator.clipboard;
+    var canCopy = clipboard && typeof clipboard.writeText === "function";
+    R.ASSET_KEYS.forEach(function (key) {
+      var button = slot(cardFor(key), "copy");
+      if (!button) { return; }
+      if (!canCopy) {
+        // The hash text is still selectable with one click.
+        button.hidden = true;
+        return;
+      }
+      var label = slot(button, "copy-label");
+      var reset = 0;
+      button.addEventListener("click", function () {
+        var value = state.hashes[key];
+        if (!value) { return; }
+        clipboard.writeText(value).then(function () {
+          setText(label, "Copied");
+          setText(byId("live"), "SHA-256 copied.");
+        }, function () {
+          setText(label, "Copy failed");
+        });
+        clearTimeout(reset);
+        reset = setTimeout(function () { setText(label, "Copy"); setText(byId("live"), ""); }, 2000);
+      });
+    });
+  }
+
+  var facts = navigatorFacts();
+  state.platform = R.detectPlatform(facts);
+  renderHero();
+  wireCopyButtons();
+  wireDownloadLinks();
+  wireNextSteps();
+  wireShare();
+  wireTabs();
+
+  refinePlatform(facts).then(function (refined) {
+    if (refined) {
+      state.platform = refined;
+      renderHero();
+    }
+  });
+
+  loadRelease().then(function (release) {
+    state.release = release;
+    state.pageUrl = R.releasePageUrl(release);
+    state.assets = R.classifyAssets(release);
+    var found = 0;
+    for (var i = 0; i < R.ASSET_KEYS.length; i++) {
+      var key = R.ASSET_KEYS[i];
+      if (state.assets[key]) { found += 1; }
+      renderCard(key, state.assets[key]);
+    }
+    renderMeta(release);
+    renderHero();
+    showStatus(found === 0 ? MESSAGES.empty : "");
+  }, function (error) {
+    var kind = error && error.kind;
+    if (kind === "none") {
+      // GitHub answered: no release exists, so there is no file to download.
+      state.assets = {};
+      for (var i = 0; i < R.ASSET_KEYS.length; i++) {
+        state.assets[R.ASSET_KEYS[i]] = null;
+        renderCard(R.ASSET_KEYS[i], null);
+      }
+    }
+    // Any other failure (a rate limit, the network, a bad answer) leaves every
+    // button on GitHub's latest-release redirect, which needs no API call.
+    renderHero();
+    showStatus(MESSAGES[kind] || MESSAGES.failed);
+  });
+}());
+</script>
+</body>
+</html>

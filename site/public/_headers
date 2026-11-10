@@ -1,0 +1,9 @@
+# Cloudflare Pages response headers (this file is not served).
+# The page's own <meta> Content-Security-Policy still applies; a header CSP
+# adds frame-ancestors, which a meta tag cannot set.
+/*
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
